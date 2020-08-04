@@ -4,7 +4,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -21,6 +20,7 @@ func main() {
 
 	// TODO: "accountbook.txt"という名前のファイルを書き込み用で開く
 	// 開く場合にエラーが発生した場合
+	file, err := os.Create("accountbook.txt")
 	if err != nil {
 		// エラーを出力して終了する
 		log.Fatal(err)
@@ -71,6 +71,7 @@ func inputItem(file *os.File) error {
 	}
 
 	// TODO: エラーがなかったことを表すnilを返す
+	return nil
 }
 
 // 一覧の表示を行う関数
@@ -89,12 +90,14 @@ func showItems() error {
 	// 1行ずつ読み込む
 	for scanner.Scan() {
 		// TODO: 1行分を取り出す
+		line := scanner.Text()
 
 		// 1行をスペースで分割する
 		splited := strings.Split(line, " ")
 		// 2つに分割できなかった場合はエラー
 		if len(splited) != 2 {
 			// TODO: 「パースに失敗しました」というエラーを生成して返す
+			log.Fatal("パースに失敗しました")
 		}
 
 		// 1つめが品目
@@ -102,6 +105,7 @@ func showItems() error {
 
 		// 2つめが値段
 		// TODO: string型をint型に変換する
+		price, err := strconv.Atoi(splited[1])
 		if err != nil {
 			return err
 		}
