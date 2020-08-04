@@ -26,7 +26,7 @@ func main() {
 	// TODO:
 	// 品目に「コーヒー」、値段に「100」と入力した場合に
 	// 「コーヒーに100円使いました」と表示する
-	fmt.Printf("%vに%v円使いました", item.Category, item.Price)
+	fmt.Printf("%sに%d円使いました", item.Category, item.Price)
 	fmt.Println("===========")
 }
 

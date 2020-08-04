@@ -13,6 +13,7 @@ func main() {
 
 	// TODO: 入力するデータの件数を入力してもらいnに入れる
 	var n int
+	fmt.Print("何件入力しますか>")
 	fmt.Scan(&n)
 
 	// TODO:
@@ -57,7 +58,7 @@ func showItems(items []Item) {
 	for i := 0; len(items) > i; /* TODO: 継続条件 */ i++ {
 		// TODO: 「コーヒー:120円」のように出す
 		// items[i]はitemsのi番目の要素(0からスタートする)
-		fmt.Printf("%v:%v円\n", items[i].Category, items[i].Price)
+		fmt.Printf("%s:%d円\n", items[i].Category, items[i].Price)
 	}
 
 	fmt.Println("===========")
