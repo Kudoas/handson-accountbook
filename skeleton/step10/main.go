@@ -35,6 +35,7 @@ func main() {
 	// ハンドラの登録
 	http.HandleFunc("/", hs.ListHandler)
 	// TODO: SaveHandlerの登録
+	http.HandleFunc("/save", hs.SaveHandler)
 
 	fmt.Println("http://localhost:8080 で起動中...")
 	// HTTPサーバを起動する
