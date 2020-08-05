@@ -113,7 +113,7 @@ var summaryTmpl = template.Must(template.New("summary").Parse(`<!DOCTYPE html>
 			var data = google.visualization.arrayToDataTable([
 				['品目', '値段'],
 				{{- range . -}}
-				['{{js .Category}}', {{- /* TODO: 合計を埋め込む */ -}}],
+				['{{js .Category}}', {{.Sum}}円],
 				{{- end -}}
 			]);
 		
@@ -144,13 +144,14 @@ var summaryTmpl = template.Must(template.New("summary").Parse(`<!DOCTYPE html>
 // 集計を表示するハンドラ
 func (hs *Handlers) SummaryHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: 集計結果を取得し、summariesに入れる
+	sumarries, err := hs.ab.GetSummaries()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// TODO: 取得した集計結果をテンプレートに埋め込む
-	if /* ここに書く */; err != nil {
+	if err := summaryTmpl.Execute(w, sumarries); /* ここに書く */ err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
