@@ -3,10 +3,11 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/jmoiron/sqlx"
 
 	"github.com/tenntenn/sqlite"
 )
@@ -16,7 +17,7 @@ func main() {
 	// データベースへ接続
 	// ドライバにはSQLiteを使って、
 	// accountbook.dbというファイルでデータベース接続を行う
-	db, err := sql.Open(sqlite.DriverName, "accountbook.db")
+	db, err := sqlx.Open(sqlite.DriverName, "accountbook.db")
 	if err != nil {
 		log.Fatal(err)
 	}

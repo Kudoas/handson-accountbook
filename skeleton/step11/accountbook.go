@@ -1,7 +1,7 @@
 package main
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 )
 
 type Item struct {
@@ -12,11 +12,11 @@ type Item struct {
 
 // 家計簿の処理を行う型
 type AccountBook struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
 // 新しいAccountBookを作成する
-func NewAccountBook(db *sql.DB) *AccountBook {
+func NewAccountBook(db *sqlx.DB) *AccountBook {
 	// AccountBookのポインタを返す
 	return &AccountBook{db: db}
 }
@@ -53,16 +53,16 @@ func (ab *AccountBook) GetItems(limit int) ([]*Item, error) {
 	// ORDER BY id DESCでidの降順（大きい順）=最近追加したものが先にくる
 	// LIMITで件数を最大の取得する件数を絞る
 	const sqlStr = `SELECT * FROM items ORDER BY id DESC LIMIT ?`
-	rows, err := ab.db.Query(sqlStr, limit)
+	rows, err := ab.db.Queryx(sqlStr, limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close() // 関数終了時にCloseが呼び出される
 
-	var items []*Item
+	items := make([]*Item, 0)
 	for rows.Next() {
-		var item Item
-		err := rows.Scan(&item.ID, &item.Category, &item.Price)
+		item := Item{}
+		err := rows.Scan(&item)
 		if err != nil {
 			return nil, err
 		}
@@ -79,25 +79,20 @@ func (ab *AccountBook) GetItems(limit int) ([]*Item, error) {
 // 集計結果を取得する
 func (ab *AccountBook) GetSummaries() ([]*Summary, error) {
 	const sqlStr = `
-	SELECT
-		category,
-		COUNT(1) as count,
-		SUM(price) as sum
-	FROM
-		items
-	GROUP BY
-		category`
-	rows, err := ab.db.Query(sqlStr)
+		SELECT category, COUNT(1) count, SUM(price) sum
+		FROM items
+		GROUP BY category
+	`
+	rows, err := ab.db.Queryx(sqlStr)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close() // 関数終了時にCloseが呼び出される
 
-	var summaries []*Summary
+	summaries := make([]*Summary, 0)
 	for rows.Next() {
-		var s Summary
-		err := rows.Scan(&s.Category, &s.Count, &s.Sum)
-		if err != nil {
+		s := Summary{}
+		if err := rows.Scan(&s); err != nil {
 			return nil, err
 		}
 		summaries = append(summaries, &s)
